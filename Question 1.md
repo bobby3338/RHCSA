@@ -17,4 +17,3 @@ Hostname = serverX.example.com
 SSH?
 
 1. SSH root@servera
-
