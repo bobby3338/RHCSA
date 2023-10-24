@@ -5,7 +5,7 @@ Note from 09/17/23
         systemd service replaced system V init
         systemctl list-unit-files -at service  //show all enabled (-a)(-t) service file
         systemctl list-units -at service   //show all serivce in 5 column   
-        syste2023-10-23-06-51-45.png2023-10-23-06-51-45.pngmctl list units -t service --state running  //filter running service
+        systemctl list units -t service --state running  //filter running service
         systemctl status rsyslog  // show status of rsyslog
         sudo systemctl stop atd // to stop a service -- atd
         sudo systemctl start atd // to start
