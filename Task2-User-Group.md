@@ -7,7 +7,8 @@
         user1:!!:19640:0:99999:7:::         //!! indicate no password set for user1
         user2:$6$eQZa4mul1Pbj8A89$N.9XRpbDtaGh9Tv8pcq6dieU6fHWSaM3wIZsfJj13VTCnYAxOHaseJq7DW.hs8hhp9plDoiyz2w3nVN.Kqt5E0:19640:0:99999:7:::
     6. cp /etc/fstab /var/fstab             //copy from directory to directory
-    7. ls -l /var/fstab                     //-rw-r--r--. 1 root root 579 Oct 10 10:23 /var/fstab 
+    7. ls -l /var/fstab                     
+        -rw-r--r--. 1 root root 579 Oct 10 10:23 /var/fstab 
     7. chown user1 /var/fstab               //change owner  -rw-r--r--. 1 user1 root 579 Oct 10 10:23 /var/fstab
     8. useradd user3                        //add user3
     9. setfacl -m u:user3:rw /var/fstab     //setfacl - set ACL to user3 
@@ -18,6 +19,166 @@
         # group: root
         user::rw-
         user:user3:rw-
+Task 11.  Partition and Swap management
+Part 1: Partion and mount
+    1. lsblk
+    2. ls /dev
+    3. fdisk /dev/nvme0n2
+    4. m - help, n - new
+    5. +1GB
+    6. default type is linux, there are options to change such as swap
+    7. w - write the partition table
+    8. partprobe /dev/nvme0n2               // if you don't see the partition
+    9. mkdir /newdisk 
+    10. mkfs.xfs /dev/nvme0n2p1 
+    11. mount /dev/nvme0n2p1 /newdisk
+    12. vi /etc/fstab
+        /dev/nvme0n2p1  /newdisk    xfs     default 0   0
+    13. mount -able
+    14. lsblk
+
+Part 2: Method 1:
+    1. free -m 
+        Swap:           2047           0        2047
+    2. fdisk /dev/nvme0n2
+    3. n, 3, +750MB,
+    4. t - change type 
+    5. L to view Hex code 
+    6. 82 swap
+    7. w - write
+    8. mkswap /dev/nvme0n2p3
+    9. vi /etc/fstab 
+        /dev/nvme0n2p3 swap swap default 0 0 
+    10. swapon -a / swapon /dev/nvme0n2p3
+    11. swapoff /dev/nvme0n2p3
+
+        Method 2:
+    1. dd if=/dev/zero of=/swapfile bs=1M count=750
+        dd - create swap file, if=/dev/zero input file or storage, of=/swapfile output file name /swapfile, bs=1M block size of 1MB, count=750 create 750 block of 1MB 
+        750+0 records in
+        750+0 records out
+        786432000 bytes (786 MB, 750 MiB) copied, 2.53381 s, 310 MB/s
+    2. du -sh /swapfile
+        du disk use, -s specify directory -h human readable    6. swapon -a 
+
+        750M	/swapfile
+    3. mkswap /swapfile 
+        mkswap: /swapfile: insecure permissions 0644, fix with: chmod 0600 /swapfile
+        Setting up swapspace version 1, size = 750 MiB (786427904 bytes)
+        no label, UUID=c0c95676-8ebe-42ce-848b-18eb3ba9bd51
+        -rw-r--r--. 1 root root 786432000 Oct 11 12:15 /swapfile
+    4. chmod 0600 /swapfile
+        -rw-------. 1 root root 786432000 Oct 11 12:15 /swapfile
+    5. vi /etc/fstab 
+        /swapfile swap swap defaults 0 0 
+    6. swapon -a 
+Task 11.  Partition and Swap management
+Part 1: Partion and mount
+    1. lsblk
+    2. ls /dev
+    3. fdisk /dev/nvme0n2
+    4. m - help, n - new
+    5. +1GB
+    6. default type is linux, there are options to change such as swap
+    7. w - write the partition table
+    8. partprobe /dev/nvme0n2               // if you don't see the partition
+    9. mkdir /newdisk 
+    10. mkfs.xfs /dev/nvme0n2p1 
+    11. mount /dev/nvme0n2p1 /newdisk
+    12. vi /etc/fstab
+        /dev/nvme0n2p1  /newdisk    xfs     default 0   0
+    13. mount -able
+    14. lsblk
+
+Part 2: Method 1:
+    1. free -m 
+        Swap:           2047           0        2047
+    2. fdisk /dev/nvme0n2
+    3. n, 3, +750MB,
+    4. t - change type 
+    5. L to view Hex code 
+    6. 82 swap
+    7. w - write
+    8. mkswap /dev/nvme0n2p3
+    9. vi /etc/fstab 
+        /dev/nvme0n2p3 swap swap default 0 0 
+    10. swapon -a / swapon /dev/nvme0n2p3
+    11. swapoff /dev/nvme0n2p3
+
+        Method 2:
+    1. dd if=/dev/zero of=/swapfile bs=1M count=750
+        dd - create swap file, if=/dev/zero input file or storage, of=/swapfile output file name /swapfile, bs=1M block size of 1MB, count=750 create 750 block of 1MB 
+        750+0 records in
+        750+0 records out
+        786432000 bytes (786 MB, 750 MiB) copied, 2.53381 s, 310 MB/s
+    2. du -sh /swapfile
+        du disk use, -s specify directory -h human readable
+        750M	/swapfile
+    3. mkswap /swapfile 
+        mkswap: /swapfile: insecure permissions 0644, fix with: chmod 0600 /swapfile
+        Setting up swapspace version 1, size = 750 MiB (786427904 bytes)
+        no label, UUID=c0c95676-8ebe-42ce-848b-18eb3ba9bd51
+        -rw-r--r--. 1 root root 786432000 Oct 11 12:15 /swapfile
+    4. chmod 0600 /swapfile
+        -rw-------. 1 root root 786432000 Oct 11 12:15 /swapfile
+    5. vi /etc/fstab 
+        /swapfile swap swap defaults 0 0 
+    6. swapon -a 
+Task 11.  Partition and Swap management
+Part 1: Partion and mount
+    1. lsblk
+    2. ls /dev
+    3. fdisk /dev/nvme0n2
+    4. m - help, n - new
+    5. +1GB
+    6. default type is linux, there are options to change such as swap
+    7. w - write the partition table
+    8. partprobe /dev/nvme0n2               // if you don't see the partition
+    9. mkdir /newdisk 
+    10. mkfs.xfs /dev/nvme0n2p1 
+    11. mount /dev/nvme0n2p1 /newdisk
+    12. vi /etc/fstab
+        /dev/nvme0n2p1  /newdisk    xfs     default 0   0
+    13. mount -able
+    14. lsblk
+
+Part 2: Method 1:
+    1. free -m 
+        Swap:           2047           0        2047
+    2. fdisk /dev/nvme0n2
+    3. n, 3, +750MB,
+    4. t - change type 
+    5. L to view Hex code 
+    6. 82 swap
+    7. w - write
+    8. mkswap /dev/nvme0n2p3
+    9. vi /etc/fstab 
+        /dev/nvme0n2p3 swap swap default 0 0 
+    10. swapon -a / swapon /dev/nvme0n2p3
+    11. swapoff /dev/nvme0n2p3
+
+        Method 2:
+    1. dd if=/dev/zero of=/swapfile bs=1M count=750
+        dd - create swap file, if=/dev/zero input file or storage, of=/swapfile output file name /swapfile, bs=1M block size of 1MB, count=750 create 750 block of 1MB 
+        750+0 records in
+        750+0 records out
+        786432000 bytes (786 MB, 750 MiB) copied, 2.53381 s, 310 MB/s
+    2. du -sh /swapfile
+        du disk use, -s specify directory -h human readable
+        750M	/swapfile
+    3. mkswap /swapfile 
+        mkswap: /swapfile: insecure permissions 0644, fix with: chmod 0600 /swapfile
+        Setting up swapspace version 1, size = 750 MiB (786427904 bytes)
+        no label, UUID=c0c95676-8ebe-42ce-848b-18eb3ba9bd51
+        -rw-r--r--. 1 root root 786432000 Oct 11 12:15 /swapfile
+    4. chmod 0600 /swapfile
+        -rw-------. 1 root root 786432000 Oct 11 12:15 /swapfile
+    5. vi /etc/fstab 
+        /swapfile swap swap defaults 0 0 
+    6. swapon -a 
+    6. swapon -a 
+    6. swapon -a 
+    6. swapon -a 
         group::r--
         mask::rw-
         other::r--

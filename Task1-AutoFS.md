@@ -1,4 +1,7 @@
-1. Creating AutoFS
+Creating NFS
+    1. 
+    
+Creating AutoFS
     1. dnf install nfs*
     2. mkdir /shared
     3. touch /shared/t1 /shared/t2 /shared/t3
@@ -7,7 +10,8 @@
         -rw-r--r--. 1 root root 0 Oct 10 12:27 t2
         -rw-r--r--. 1 root root 0 Oct 10 12:27 t3
     5. chmod 777 /shared
-    6. vi /etc/exports
+    6. vi /etc/exports    6. swapon -a 
+
         /shared             192.168.43.22(ro, sync)     // ip addr of client
         folder to shared    remote host ip addr     ro / read only rw / read write     sync / syncrhonous mode?
     7. exportfs -avr                        //NFS exports, -a all directories listed, -r refresh, -v verbose.
