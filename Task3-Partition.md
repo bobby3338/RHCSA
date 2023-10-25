@@ -1,3 +1,29 @@
+Creating partition and make file system to mount
+    fdisk /dev/nvme0n2
+    cfdisk /dev/nvme0n2
+    fdisk -l /dev/vd{b,c}
+    l to view partition type
+    t to change partition time
+    mkfs.vfat -f 32 /dev/vdb1
+        -f format size, default if empty
+    fatlabel /dev/vdb1 Myfat
+    mkfs.ext4 -E nodiscard /dev/vdb2
+        -E no discard
+    e2label /dev/vdb2 Myext4
+    mkfs.xfs -f -K /dev/vdb3
+        -f force, if data exists, -K no discard  
+    xfs_admin -L Myxfs /dev/vdb3
+        -L label   
+    blkid 
+    
+    mkdir /mnt/{myfat,myext4,Myxfs}
+    vim /etc/fstab
+        LABEL=Myfat     /mnt/myfat  vfat    defaults 0  0
+        UUID=           /mnt/Myext4     acl    defaults 0 0 
+        /dev/vdb3       /mnt/Myxfs      xfs     defaults 0 0 
+    df 
+    mount -a 
+   
 Creating virtual data optimizer 
     1. yum info lvm* // 
     2. dnf install lvm* 
@@ -16,7 +42,6 @@ Creating virtual data optimizer
         VDO1 absolute path Mounting Directory filesystem default mount dump back up filesystem check 
     12. mount -a 
     14. lsblk
-
 Swap management
     Part 1: Partion and mount 
     1. lsblk 

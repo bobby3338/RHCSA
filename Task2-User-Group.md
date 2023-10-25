@@ -1,5 +1,5 @@
-1. Create User and group
-       1. groupadd group1
+Create User and group
+    1. groupadd group1
     2. useradd user1 -G group1              //-G specify the intial login group for the user1
     3. useradd user2 -s /sbin/nologin       //-s specify login shell sbin/nologin indicate no interactive logins.
     4. cat /etc/passwd                      //user2:x:1002:1003::/home/user2:/sbin/nologin
@@ -19,166 +19,7 @@
         # group: root
         user::rw-
         user:user3:rw-
-Task 11.  Partition and Swap management
-Part 1: Partion and mount
-    1. lsblk
-    2. ls /dev
-    3. fdisk /dev/nvme0n2
-    4. m - help, n - new
-    5. +1GB
-    6. default type is linux, there are options to change such as swap
-    7. w - write the partition table
-    8. partprobe /dev/nvme0n2               // if you don't see the partition
-    9. mkdir /newdisk 
-    10. mkfs.xfs /dev/nvme0n2p1 
-    11. mount /dev/nvme0n2p1 /newdisk
-    12. vi /etc/fstab
-        /dev/nvme0n2p1  /newdisk    xfs     default 0   0
-    13. mount -able
-    14. lsblk
 
-Part 2: Method 1:
-    1. free -m 
-        Swap:           2047           0        2047
-    2. fdisk /dev/nvme0n2
-    3. n, 3, +750MB,
-    4. t - change type 
-    5. L to view Hex code 
-    6. 82 swap
-    7. w - write
-    8. mkswap /dev/nvme0n2p3
-    9. vi /etc/fstab 
-        /dev/nvme0n2p3 swap swap default 0 0 
-    10. swapon -a / swapon /dev/nvme0n2p3
-    11. swapoff /dev/nvme0n2p3
-
-        Method 2:
-    1. dd if=/dev/zero of=/swapfile bs=1M count=750
-        dd - create swap file, if=/dev/zero input file or storage, of=/swapfile output file name /swapfile, bs=1M block size of 1MB, count=750 create 750 block of 1MB 
-        750+0 records in
-        750+0 records out
-        786432000 bytes (786 MB, 750 MiB) copied, 2.53381 s, 310 MB/s
-    2. du -sh /swapfile
-        du disk use, -s specify directory -h human readable    6. swapon -a 
-
-        750M	/swapfile
-    3. mkswap /swapfile 
-        mkswap: /swapfile: insecure permissions 0644, fix with: chmod 0600 /swapfile
-        Setting up swapspace version 1, size = 750 MiB (786427904 bytes)
-        no label, UUID=c0c95676-8ebe-42ce-848b-18eb3ba9bd51
-        -rw-r--r--. 1 root root 786432000 Oct 11 12:15 /swapfile
-    4. chmod 0600 /swapfile
-        -rw-------. 1 root root 786432000 Oct 11 12:15 /swapfile
-    5. vi /etc/fstab 
-        /swapfile swap swap defaults 0 0 
-    6. swapon -a 
-Task 11.  Partition and Swap management
-Part 1: Partion and mount
-    1. lsblk
-    2. ls /dev
-    3. fdisk /dev/nvme0n2
-    4. m - help, n - new
-    5. +1GB
-    6. default type is linux, there are options to change such as swap
-    7. w - write the partition table
-    8. partprobe /dev/nvme0n2               // if you don't see the partition
-    9. mkdir /newdisk 
-    10. mkfs.xfs /dev/nvme0n2p1 
-    11. mount /dev/nvme0n2p1 /newdisk
-    12. vi /etc/fstab
-        /dev/nvme0n2p1  /newdisk    xfs     default 0   0
-    13. mount -able
-    14. lsblk
-
-Part 2: Method 1:
-    1. free -m 
-        Swap:           2047           0        2047
-    2. fdisk /dev/nvme0n2
-    3. n, 3, +750MB,
-    4. t - change type 
-    5. L to view Hex code 
-    6. 82 swap
-    7. w - write
-    8. mkswap /dev/nvme0n2p3
-    9. vi /etc/fstab 
-        /dev/nvme0n2p3 swap swap default 0 0 
-    10. swapon -a / swapon /dev/nvme0n2p3
-    11. swapoff /dev/nvme0n2p3
-
-        Method 2:
-    1. dd if=/dev/zero of=/swapfile bs=1M count=750
-        dd - create swap file, if=/dev/zero input file or storage, of=/swapfile output file name /swapfile, bs=1M block size of 1MB, count=750 create 750 block of 1MB 
-        750+0 records in
-        750+0 records out
-        786432000 bytes (786 MB, 750 MiB) copied, 2.53381 s, 310 MB/s
-    2. du -sh /swapfile
-        du disk use, -s specify directory -h human readable
-        750M	/swapfile
-    3. mkswap /swapfile 
-        mkswap: /swapfile: insecure permissions 0644, fix with: chmod 0600 /swapfile
-        Setting up swapspace version 1, size = 750 MiB (786427904 bytes)
-        no label, UUID=c0c95676-8ebe-42ce-848b-18eb3ba9bd51
-        -rw-r--r--. 1 root root 786432000 Oct 11 12:15 /swapfile
-    4. chmod 0600 /swapfile
-        -rw-------. 1 root root 786432000 Oct 11 12:15 /swapfile
-    5. vi /etc/fstab 
-        /swapfile swap swap defaults 0 0 
-    6. swapon -a 
-Task 11.  Partition and Swap management
-Part 1: Partion and mount
-    1. lsblk
-    2. ls /dev
-    3. fdisk /dev/nvme0n2
-    4. m - help, n - new
-    5. +1GB
-    6. default type is linux, there are options to change such as swap
-    7. w - write the partition table
-    8. partprobe /dev/nvme0n2               // if you don't see the partition
-    9. mkdir /newdisk 
-    10. mkfs.xfs /dev/nvme0n2p1 
-    11. mount /dev/nvme0n2p1 /newdisk
-    12. vi /etc/fstab
-        /dev/nvme0n2p1  /newdisk    xfs     default 0   0
-    13. mount -able
-    14. lsblk
-
-Part 2: Method 1:
-    1. free -m 
-        Swap:           2047           0        2047
-    2. fdisk /dev/nvme0n2
-    3. n, 3, +750MB,
-    4. t - change type 
-    5. L to view Hex code 
-    6. 82 swap
-    7. w - write
-    8. mkswap /dev/nvme0n2p3
-    9. vi /etc/fstab 
-        /dev/nvme0n2p3 swap swap default 0 0 
-    10. swapon -a / swapon /dev/nvme0n2p3
-    11. swapoff /dev/nvme0n2p3
-
-        Method 2:
-    1. dd if=/dev/zero of=/swapfile bs=1M count=750
-        dd - create swap file, if=/dev/zero input file or storage, of=/swapfile output file name /swapfile, bs=1M block size of 1MB, count=750 create 750 block of 1MB 
-        750+0 records in
-        750+0 records out
-        786432000 bytes (786 MB, 750 MiB) copied, 2.53381 s, 310 MB/s
-    2. du -sh /swapfile
-        du disk use, -s specify directory -h human readable
-        750M	/swapfile
-    3. mkswap /swapfile 
-        mkswap: /swapfile: insecure permissions 0644, fix with: chmod 0600 /swapfile
-        Setting up swapspace version 1, size = 750 MiB (786427904 bytes)
-        no label, UUID=c0c95676-8ebe-42ce-848b-18eb3ba9bd51
-        -rw-r--r--. 1 root root 786432000 Oct 11 12:15 /swapfile
-    4. chmod 0600 /swapfile
-        -rw-------. 1 root root 786432000 Oct 11 12:15 /swapfile
-    5. vi /etc/fstab 
-        /swapfile swap swap defaults 0 0 
-    6. swapon -a 
-    6. swapon -a 
-    6. swapon -a 
-    6. swapon -a 
         group::r--
         mask::rw-
         other::r--
@@ -239,10 +80,23 @@ Part 2: Method 1:
         mkdir -p /home/managers
         chgrp sysmgrs /home/managers
         chmod 2775 /home/managers
-
-3. Add user with user id and password
+Add user with user id and password
     useradd -u 1055 redhat 
     echo redhat | passwd --stdin redhat
     
-
+Chage 
+    chage --list zebra
+        view user zebra password attributes
+    grep zebra /etc/shadow
+    date -d +64days +%F
+    date -u
+    man chage
+    chage zebra --mindays 3 --lastday 2023-02-05 --warndays 14 --inactive 5 --expiredate 2023-10-10
+    timedatectl set-ntp 0 / timedatectl set-ntp 1
+    vi /etc/login.defs 
+        set default login parameter 
+    vi /etc/security/pwquality.conf
+    vi /etc/security/pwquality.conf.d/myrules.conf
+            Minlen=13
+            
 

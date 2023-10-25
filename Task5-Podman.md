@@ -1,5 +1,5 @@
-Task 9: Managing Container podman
-    Part 1:
+Managing Container podman
+   Part 1:
     1. dnf install podman*
     2. podman login                 //use redhat login
     3. podman search httpd          // view the container link address
@@ -50,3 +50,90 @@ Task 9: Managing Container podman
         16. systemctl --usertest start usertest-container
         17. systemctl --usertest enable usertest-container
         18. systemctl --usertest status usertest-container
+Podman 
+    podman search 
+    vi /etc/containers/registries.conf
+    unqualified -search-registries=[]
+    podman login registry.redhat.io
+        name and password
+    podman pull registry.redhat.io/ubi9/ubi-minimal
+    skopeo login registry.redhat.io
+        name and password
+    skopeo inspect docker://registry.redhat.io/ubi9/httpd-24 | less 
+    podman inspect registry.redhat.io/ubi9/httpd-24
+    podman pull registry.redhat.io/ubi9/httpd-24:1-201
+    podman inspect registry.redhat.io/ubi9/httpd-24:1-201
+        "Config"
+            "cmd"  #command script
+    podman ps -a    
+    podman run <imageid>
+    podman inspect <imageid> | grep -A2 cmd 
+    podman rm -a #remove all container
+    podman run -it --name myubi1 <imageid> /bin/bash
+        -i interactively -t tty
+    microdnf install procps-ng
+    ps -ax 
+    podman start myubi9
+    podman exec -it myubi1 /bin/bash
+    podman exec -it myubi1 echo Hello World!
+    podman images
+    podman run -itd --name myubi2 <imageid>
+        -i -t -d detached
+    podman kill myubi1
+    podman kill -a 
+    podman run --name myhttpd -d -p 4080:8080 <imageid>
+        --name -d detached -p map port between the host and container perspectively
+    firewall-cmd --add-port 4080/tcp --permanent
+    firewall-cmd --reload
+    mkdir webdocs
+    cat > webdocs/index.html
+    podman stop myhttpd1
+    podman run --name myhttpd2 -d -p 4080:8080 -v /home/admin/webdocs:/var/www.html:Z <imageid>
+    podman run --name myhttpd2 -d -p 4080:8080 -v /home/admin/web/docs:/var/www.html:Z -v /dev/log:/dev/log <imageid>
+    podman exec -it myhttpd2 bash
+    looger hello world!
+    podman stop myhttpd2
+    
+    Building container:
+        mkdir nximg
+        cd nximg
+        vi containerfile
+            FROM    registry.redhat.io/ubi9/ubi-minimal:9.1.0
+            RUN     microdnf install -y nginx 
+            RUN     rm -r /usr/share/nginx/html/*
+            COPY    index.html  /usr/share/nginx/html
+            COPY    startup.sh
+            EXPOSE  80
+            CMD     /startup.sh
+            touch index.html    startup.sh
+            vi startup.sh
+                exec /usr/sbin/nginx -g "daemon off"
+                    -g "daemon off" not to run in the background as daemon 
+            
+                #!/bin/bash
+                if [! -z "$CUSTOM_MSG"] && [! -f /CUSTOM_MSG.done]; then
+                echo -e "Custom Message: $CUSTOM_MSG" >> /usr/share/nginx/html/index.html
+                touch /CUSTOM_MSG.done
+                fi
+                exec /usr/sbin/nginx -g "daemon off;"
+                chmod +x startup.sh
+
+            podman build . -t nximg:testing
+                . current directiory -t to tag the image name nximg tag testing 
+            podman run --name mynx1 -d -p 4080:80 -e CUSTOM_MSG"Happy Brithday" nximg:testing 
+            loginctl show-user admin
+                linger=no
+            sudo loginctl enable-linger admin
+            cd ~
+            mkdir -p ~/.config/systemd/user
+            cd .config/systemd/user/
+            podman generate systemd --name mynx1 --files --new
+                --name mynx1    --files unit file in current directory --new create and delete while running
+            podman stop mynx1
+            podman rm mynx1
+            systemctl --user daemon-reload
+            systemctl --user start container-mynx1.service 
+            systemctl --user status container-mynx1.service 
+            podman ps
+            systemctl --user enable container-mynx1.service
+            

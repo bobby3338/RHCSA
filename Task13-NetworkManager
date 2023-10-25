@@ -21,6 +21,8 @@ systemctl restart NetworkManager
 nmcli con del ens3
 nmcli con del Wired\ connection\ 1
 nmcli con add type ethernet con-name MyNetWork ifname ens192 ipv4.address 192.168.0.12 gw4 192.168.0.10 ipv4.dns 8.8.8.8 
+nmcli con mod Ethernet\ connection\ 1 ipv4.dns 8.8.8.8
+
 
 vim /etc/nsswitch.conf
     hosts: files dns myhostname 
@@ -31,3 +33,18 @@ vim /etc/hosts
 vim /etc/resolv.conf
     search example
     nameserver 10.10.10.10
+    nmcli con mod Ethernet\ connection\ 1 ipv4.dns 8.8.8.8
+    add nameserver 8.8.8.8 to /etc/hosts
+systemctl edit httpd.service
+    [Unit]
+    After=network.target
+systemctl start httpd
+firewall-cmd --list-all
+firewall-cmd --get-zones
+firewall-cmd --set-default-zone work
+firewall-cmd --remove-service ssh 
+firewall-cmd --reload
+
+
+
+
